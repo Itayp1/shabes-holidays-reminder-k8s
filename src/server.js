@@ -1,5 +1,4 @@
 const conf = require("../server.config");
-const routes = require("./routes/index");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -26,7 +25,6 @@ app.use(helmet());
 //register gzip compression
 app.use(compression());
 
-app.use("/api", routes);
 /// catch 404 and forward to error handler
 app.use((req, res, next) => {
   const err = new Error("Not Found");
