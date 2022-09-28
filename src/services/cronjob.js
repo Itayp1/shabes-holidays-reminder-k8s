@@ -35,7 +35,7 @@ const msgReminder = cron.schedule("34 21 * * *", async () => {
   }
 });
 
-const beforeShabesReminder = cron.schedule("*/1 * * * *", async () => {
+const beforeShabesReminder = cron.schedule("*/5 * * * *", async () => {
   if (tmpAlertobj) {
     const now = moment(); //now
     const remindertIime = moment(`${now.format("YYYY-MM-DD")}T${tmpAlertobj.time}:00`);
