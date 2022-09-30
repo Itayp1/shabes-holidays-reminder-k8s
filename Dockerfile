@@ -1,5 +1,6 @@
 FROM node:16
 
+RUN cp /usr/share/zoneinfo/Israel /etc/localtime && echo "Israel" >  /etc/timezone
 # Create app directory
 WORKDIR /usr/src/app
 
