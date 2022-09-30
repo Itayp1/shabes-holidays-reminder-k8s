@@ -15,7 +15,7 @@ logger("starting cronjob process");
 /////////////////////////////////  │  │  │ │ │
 /////////////////////////////////  │  │  │ │ │
 ///////////////////////////////#   *  *  * * *
-const msgReminder = cron.schedule("34 21 * * *", async () => {
+const msgReminder = cron.schedule("30 9 * * *", async () => {
   const alertTimeObj = await getShabesAndHolidaysTimes();
   if (!alertTimeObj) {
     logger("no alert to send");
