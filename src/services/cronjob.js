@@ -25,9 +25,8 @@ const msgReminder = cron.schedule("30 9 * * *", async () => {
     return;
   } else {
     const textCandles = `הדלקת נרות בשעה :${alertTimeObj.time}`;
-    const textCandles2 = alertTimeObj.secHoliday ? `הדלקת נרות למחרת בשעה :${alertTimeObj.secHoliday}` : "";
     const havdala = `הבדלה: ${alertTimeObj.havdala}`;
-    const msg = `${textCandles} ${textCandles2} ${havdala}`;
+    const msg = `${textCandles} ${havdala}`;
 
     logger(`send sms msg:${msg}`);
     await sendSmsReminder(msg, ["0502838788"]);
