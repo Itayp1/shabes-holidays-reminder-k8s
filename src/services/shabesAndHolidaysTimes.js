@@ -4,11 +4,11 @@ const promisify = require("util").promisify;
 const soap = require("soap");
 const moment = require("moment");
 const logger = require("elk-logging");
-
 const hebcalApi = axios.create({
   baseURL: "https://www.hebcal.com",
 });
 
+const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
 const getShabesAndHolidaysTimes = async () => {
   const { data } = await hebcalApi.get("/hebcal", {
     params: {
@@ -60,6 +60,40 @@ const sendSmsReminder = async (textMsg, phoneNumbers) => {
   }
 };
 
+const sendWhatsAppReminder = async (shabesEntering, havdala, phoneNumbers, name) => {
+  return await axios.post(`https://graph.facebook.com/v17.0/113481255179838/messages?access_token=${WHATSAPP_TOKEN}`, {
+    messaging_product: "whatsapp",
+    to: phoneNumbers,
+    type: "template",
+    template: {
+      name: "shabea",
+      language: {
+        code: "he",
+        policy: "deterministic",
+      },
+      components: [
+        {
+          type: "BODY",
+          parameters: [
+            {
+              type: "text",
+              text: `*${name}*`,
+            },
+            {
+              type: "text",
+              text: `*${shabesEntering}*`,
+            },
+            {
+              type: "text",
+              text: `*${havdala}*`,
+            },
+          ],
+        },
+      ],
+    },
+  });
+};
+
 async function getSoapClient(url, methodPath) {
   return new Promise((resolve, reject) => {
     soap.createClient(url, {}, function (err, client) {
@@ -76,4 +110,4 @@ async function getSoapClient(url, methodPath) {
   });
 }
 
-module.exports = { getShabesAndHolidaysTimes, sendSmsReminder };
+module.exports = { getShabesAndHolidaysTimes, sendSmsReminder, sendWhatsAppReminder };

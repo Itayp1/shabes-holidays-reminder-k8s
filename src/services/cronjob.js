@@ -1,7 +1,7 @@
 const moment = require("moment");
 const cron = require("node-cron");
 const logger = require("elk-logging");
-const { getShabesAndHolidaysTimes, sendSmsReminder } = require("./shabesAndHolidaysTimes.js");
+const { getShabesAndHolidaysTimes, sendSmsReminder, sendWhatsAppReminder } = require("./shabesAndHolidaysTimes.js");
 
 let tmpAlertobj = false;
 
@@ -29,7 +29,10 @@ const msgReminder = cron.schedule("30 9 * * *", async () => {
     const msg = `${textCandles} ${havdala}`;
 
     logger(`send sms msg:${msg}`);
-    await sendSmsReminder(msg, ["0502838788"]);
+
+    await sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972502838788", "טל פרץ");
+    await sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972587107691", "איתי פרץ");
+
     tmpAlertobj = { msg, time: alertTimeObj.time };
   }
 });
@@ -41,24 +44,25 @@ const msgReminder = cron.schedule("30 9 * * *", async () => {
 //////////////////////////////////////////  │   │ │ │ │
 //////////////////////////////////////////  │   │ │ │ │
 //////////////////////////////////////////  *   *  * * *
-const beforeShabesReminder = cron.schedule("*/5 * * * *", async () => {
-  if (tmpAlertobj) {
-    const now = moment(); //now
-    const remindertIime = moment(`${now.format("YYYY-MM-DD")}T${tmpAlertobj.time}:00`);
-    const timeUntilShabes = remindertIime.diff(now, "minutes");
-    if (timeUntilShabes < 20) {
-      const ReminderMsg = `תזכורת לכניסת השבת ${tmpAlertobj.msg}`;
-      await sendSmsReminder(ReminderMsg, ["0502838788"]);
-      logger(`send sms reminder msg:${ReminderMsg}`);
-      tmpAlertobj = false;
-      return;
-    } else {
-      logger(`timeUntilShabes:${timeUntilShabes} wait until he will be 30`);
-    }
-  } else {
-    logger(`dosent have any messages in the queue`);
-  }
-});
+// const beforeShabesReminder = cron.schedule("*/5 * * * *", async () => {
+//   if (tmpAlertobj) {
+//     const now = moment(); //now
+//     const remindertIime = moment(`${now.format("YYYY-MM-DD")}T${tmpAlertobj.time}:00`);
+//     const timeUntilShabes = remindertIime.diff(now, "minutes");
+//     if (timeUntilShabes < 20) {
+//       const ReminderMsg = `תזכורת לכניסת השבת ${tmpAlertobj.msg}`;
+//       await sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972502838788", "טל פרץ");
+//       await sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972587107691", "איתי פרץ");
+//       logger(`send sms reminder msg:${ReminderMsg}`);
+//       tmpAlertobj = false;
+//       return;
+//     } else {
+//       logger(`timeUntilShabes:${timeUntilShabes} wait until he will be 30`);
+//     }
+//   } else {
+//     logger(`dosent have any messages in the queue`);
+//   }
+// });
 
 module.exports = {
   beforeShabesReminder,
