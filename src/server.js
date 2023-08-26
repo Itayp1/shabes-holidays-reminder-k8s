@@ -42,7 +42,7 @@ app.use((err, req, res, next) => {
   res.status(status).json({ status: err.message });
 });
 
-tasks.beforeShabesReminder.start();
+// tasks.beforeShabesReminder.start();
 tasks.msgReminder.start();
 app.listen(conf.PORT, () => {
   logger(`Server has started - port ${conf.PORT}`);

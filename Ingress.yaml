@@ -1,0 +1,19 @@
+apiVersion: "networking.k8s.io/v1"
+kind: "Ingress"
+metadata:
+  name: "shabes-holidays-reminder-k8s"
+  namespace: "qa"
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+    - host: "shabes-holidays-reminder-k8s-qa.itayp-dev.com"
+      http:
+        paths:
+          - pathType: "Prefix"
+            path: "/"
+            backend:
+              service:
+                name: "shabes-holidays-reminder-k8s"
+                port:
+                  number: 443

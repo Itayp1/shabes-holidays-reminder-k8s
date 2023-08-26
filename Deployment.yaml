@@ -1,0 +1,53 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "shabes-holidays-reminder-k8s"
+  namespace: "qa"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "shabes-holidays-reminder-k8s"
+  template:
+    metadata:
+      labels:
+        app: "shabes-holidays-reminder-k8s"
+    spec:
+      containers:
+        - name: "shabes-holidays-reminder-k8s"
+          image: "itayp/shabes-holidays-reminder-k8s:83"
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: "/health"
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: "/health"
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 3
+          env:
+            - name: "ENV"
+              value: "I WAS IN QA"
+            - name: "SQL_PORT"
+              value: "I WAS THERE"
+            - name: "SQL_SERVER"
+              value: "172.1.2.3"
+            - name: "DSFDSF_ENCRYPT"
+              value: "7oqvmBtbDvyvu9y1BLxY"
+            - name: "SQL_SERVER_PASS_ENCRYPT"
+              value: "sta2zkJIWKH/"
+            - name: "ELASTIC_ADDRESS"
+              value: "https://search-kubernates-xvmidfo7uo7wtw47fxtlo46j7u.us-west-1.es.amazonaws.com"
+            - name: "ELASTIC_PASSWORD"
+              value: "Coffe519!"
+            - name: "ELASTIC_USERNAME"
+              value: "admin"
+            - name: "SERVICE_NAME"
+              value: "trading-alert"
+            - name: "WHATSAPP_TOKEN"
+              value: "EAAyW0AzZB8ZBsBO0ZBH4djZB7Kc74zfMJDfFqqfZB8ZCqsvqQLqMqGiXDg44ZC3V5vxO0ybrcvZA5SF7o6x1EZCVZC53M6aPZB555j85Wu71xDQFbCyeZBvDr39w8K296blqJlocRYeG2sLyEZCX5ZBJVRrWrm1e2wZAuTXqnxxcSLnGdeZAZByQPhZA4yEpZCu1ZC0aZBpLfzCtJq2JKEHBZBIzHFM74U"

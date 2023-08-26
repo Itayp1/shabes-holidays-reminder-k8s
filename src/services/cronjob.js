@@ -6,7 +6,9 @@ const { getShabesAndHolidaysTimes, sendSmsReminder, sendWhatsAppReminder } = req
 let tmpAlertobj = false;
 
 logger("starting cronjob process");
-
+sendWhatsAppReminder("10:00", "10:00", "972587107691", "איתי פרץ")
+  .then((res) => console.log("send message"))
+  .then(console.error);
 /////////////////////////////////  ┌────────────── minute
 /////////////////////////////////  │  ┌─────────── hour
 /////////////////////////////////  │  │  ┌──────── day of month
@@ -65,6 +67,6 @@ const msgReminder = cron.schedule("30 9 * * *", async () => {
 // });
 
 module.exports = {
-  beforeShabesReminder,
+  // beforeShabesReminder,
   msgReminder,
 };
