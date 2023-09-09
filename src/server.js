@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
-const logger = require("elk-logging");
+const logger = (msg) => console.log(msg, new Date());
 const express = require("express");
 const app = express();
 

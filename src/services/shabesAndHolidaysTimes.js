@@ -3,7 +3,7 @@ const conf = require("../../server.config");
 const promisify = require("util").promisify;
 const soap = require("soap");
 const moment = require("moment");
-const logger = require("elk-logging");
+const logger = (msg) => console.log(msg, new Date());
 const hebcalApi = axios.create({
   baseURL: "https://www.hebcal.com",
 });
@@ -61,37 +61,41 @@ const sendSmsReminder = async (textMsg, phoneNumbers) => {
 };
 
 const sendWhatsAppReminder = async (shabesEntering, havdala, phoneNumbers, name) => {
-  return await axios.post(`https://graph.facebook.com/v17.0/113481255179838/messages?access_token=${WHATSAPP_TOKEN}`, {
-    messaging_product: "whatsapp",
-    to: phoneNumbers,
-    type: "template",
-    template: {
-      name: "shabea",
-      language: {
-        code: "he",
-        policy: "deterministic",
-      },
-      components: [
-        {
-          type: "BODY",
-          parameters: [
-            {
-              type: "text",
-              text: `*${name}*`,
-            },
-            {
-              type: "text",
-              text: `*${shabesEntering}*`,
-            },
-            {
-              type: "text",
-              text: `*${havdala}*`,
-            },
-          ],
+  try {
+    await axios.post(`https://graph.facebook.com/v17.0/113481255179838/messages?access_token=${WHATSAPP_TOKEN}`, {
+      messaging_product: "whatsapp",
+      to: phoneNumbers,
+      type: "template",
+      template: {
+        name: "shabea",
+        language: {
+          code: "he",
+          policy: "deterministic",
         },
-      ],
-    },
-  });
+        components: [
+          {
+            type: "BODY",
+            parameters: [
+              {
+                type: "text",
+                text: `*${name}*`,
+              },
+              {
+                type: "text",
+                text: `*${shabesEntering}*`,
+              },
+              {
+                type: "text",
+                text: `*${havdala}*`,
+              },
+            ],
+          },
+        ],
+      },
+    });
+  } catch (error) {
+    console.error(`failes to send whatsapp message ` + error);
+  }
 };
 
 async function getSoapClient(url, methodPath) {

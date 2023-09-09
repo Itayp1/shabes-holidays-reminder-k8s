@@ -1,14 +1,12 @@
 const moment = require("moment");
 const cron = require("node-cron");
-const logger = require("elk-logging");
+const logger = (msg) => console.log(msg, new Date());
 const { getShabesAndHolidaysTimes, sendSmsReminder, sendWhatsAppReminder } = require("./shabesAndHolidaysTimes.js");
 
-let tmpAlertobj = false;
-
 logger("starting cronjob process");
-sendWhatsAppReminder("10:00", "10:00", "972587107691", "איתי פרץ")
-  .then((res) => console.log("send message"))
-  .then(console.error);
+// sendWhatsAppReminder("10:00", "10:00", "972587107691", "איתי פרץ")
+//   .then((res) => logger("send message"))
+//   .catch(console.error);
 /////////////////////////////////  ┌────────────── minute
 /////////////////////////////////  │  ┌─────────── hour
 /////////////////////////////////  │  │  ┌──────── day of month
@@ -17,13 +15,10 @@ sendWhatsAppReminder("10:00", "10:00", "972587107691", "איתי פרץ")
 /////////////////////////////////  │  │  │ │ │
 /////////////////////////////////  │  │  │ │ │
 ///////////////////////////////#   *  *  * * *
-const msgReminder = cron.schedule("30 9 * * *", async () => {
+const msgReminder = cron.schedule("33 13 * * *", async () => {
   const alertTimeObj = await getShabesAndHolidaysTimes();
   if (!alertTimeObj) {
     logger("no alert to send");
-    return;
-  } else if (tmpAlertobj) {
-    logger(`there is an tmpAlertobj obj do nothing ${JSON.stringify(tmpAlertobj)}`);
     return;
   } else {
     const textCandles = `הדלקת נרות בשעה :${alertTimeObj.time}`;
@@ -32,39 +27,12 @@ const msgReminder = cron.schedule("30 9 * * *", async () => {
 
     logger(`send sms msg:${msg}`);
 
-    await sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972502838788", "טל פרץ");
-    await sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972587107691", "איתי פרץ");
+    sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972502838788", "טל פרץ");
+    sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972587107691", "איתי פרץ");
 
     tmpAlertobj = { msg, time: alertTimeObj.time };
   }
 });
-//////////////////////////////////////////  ┌────────────── minute
-//////////////////////////////////////////  │   ┌────────── hour
-//////////////////////////////////////////  │   │ ┌──────── day of month
-//////////////////////////////////////////  │   │ │ ┌────── month
-//////////////////////////////////////////  │   │ │ │ ┌──── day of week
-//////////////////////////////////////////  │   │ │ │ │
-//////////////////////////////////////////  │   │ │ │ │
-//////////////////////////////////////////  *   *  * * *
-// const beforeShabesReminder = cron.schedule("*/5 * * * *", async () => {
-//   if (tmpAlertobj) {
-//     const now = moment(); //now
-//     const remindertIime = moment(`${now.format("YYYY-MM-DD")}T${tmpAlertobj.time}:00`);
-//     const timeUntilShabes = remindertIime.diff(now, "minutes");
-//     if (timeUntilShabes < 20) {
-//       const ReminderMsg = `תזכורת לכניסת השבת ${tmpAlertobj.msg}`;
-//       await sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972502838788", "טל פרץ");
-//       await sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972587107691", "איתי פרץ");
-//       logger(`send sms reminder msg:${ReminderMsg}`);
-//       tmpAlertobj = false;
-//       return;
-//     } else {
-//       logger(`timeUntilShabes:${timeUntilShabes} wait until he will be 30`);
-//     }
-//   } else {
-//     logger(`dosent have any messages in the queue`);
-//   }
-// });
 
 module.exports = {
   // beforeShabesReminder,
