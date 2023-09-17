@@ -44,6 +44,8 @@ app.use((err, req, res, next) => {
 
 // tasks.beforeShabesReminder.start();
 tasks.msgReminder.start();
+tasks.priceAlert.start();
+
 app.listen(conf.PORT, () => {
   logger(`Server has started - port ${conf.PORT}`);
 });
