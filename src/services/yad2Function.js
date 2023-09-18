@@ -46,7 +46,7 @@ const getPriceListMultiPages = async (params, adNumber) => {
 let adsRecord = [
   {
     adNumber: 57858110,
-    PriceForAlert: 80000,
+    PriceForAlert: 79000,
     link: "item/gv0r3mcs",
     searchLink: "https://www.yad2.co.il/vehicles/cars?manufacturer=27&model=2333&year=2016--1&km=-1-130000&Order=3&priceOnly=1",
     carModel: "mazda cx5",
@@ -98,19 +98,19 @@ let adsRecord = [
       forceLdLoad: "true",
     },
   },
-  {
-    adNumber: 73513057,
-    PriceForAlert: 65000,
-    link: "item/u83tqa4k",
-    searchLink: "https://www.yad2.co.il/vehicles/cars?manufacturer=32&model=1181&year=2012-2013&km=-1-130000&gearBox=1,6,9&Order=3&priceOnly=1",
-    carModel: "ניסן קשקאי",
-    serachObj: {
-      fields: "manufacturer,model,year,area,km,ownerID,seats,engineval,engineType,subModel,group_color,gearBox",
-      manufacturer: "32",
-      model: "1181",
-      year: "2012-2013",
-    },
-  },
+  // {
+  //   adNumber: 73513057,
+  //   PriceForAlert: 65000,
+  //   link: "item/u83tqa4k",
+  //   searchLink: "https://www.yad2.co.il/vehicles/cars?manufacturer=32&model=1181&year=2012-2013&km=-1-130000&gearBox=1,6,9&Order=3&priceOnly=1",
+  //   carModel: "ניסן קשקאי",
+  //   serachObj: {
+  //     fields: "manufacturer,model,year,area,km,ownerID,seats,engineval,engineType,subModel,group_color,gearBox",
+  //     manufacturer: "32",
+  //     model: "1181",
+  //     year: "2012-2013",
+  //   },
+  // },
 ];
 
 const checkForPriceChange = async (params, adNumber, PriceForAlert) => {
