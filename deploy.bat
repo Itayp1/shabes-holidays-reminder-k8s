@@ -3,8 +3,8 @@ kubernates-yaml --env=qa --name=shabes-holidays-reminder-k8s --domain=itayp-dev.
 kubernates-yaml --env=qa --name=shabes-holidays-reminder-k8s --operation=Service
 
  
-docker build -t itayp/shabes-holidays-reminder-k8s:84 -t itayp/shabes-holidays-reminder-k8s:latest  .
-docker push itayp/shabes-holidays-reminder-k8s:84
+docker build -t itayp/shabes-holidays-reminder-k8s:86 -t itayp/shabes-holidays-reminder-k8s:latest  .
+docker push itayp/shabes-holidays-reminder-k8s:86
 docker push itayp/shabes-holidays-reminder-k8s:latest
 
  
