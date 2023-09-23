@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: "shabes-holidays-reminder-k8s"
-          image: "itayp/shabes-holidays-reminder-k8s:87"
+          image: "itayp/shabes-holidays-reminder-k8s:88"
           ports:
             - containerPort: 3000
           livenessProbe:
