@@ -7,8 +7,7 @@ const logger = (msg) => console.log(msg, new Date());
 const hebcalApi = axios.create({
   baseURL: "https://www.hebcal.com",
 });
-
-const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
+const { WHATSAPP_TOKEN } = require("../../server.config");
 const getShabesAndHolidaysTimes = async () => {
   const { data } = await hebcalApi.get("/hebcal", {
     params: {
@@ -62,7 +61,7 @@ const sendSmsReminder = async (textMsg, phoneNumbers) => {
 
 const sendWhatsAppReminder = async (shabesEntering, havdala, phoneNumbers, name) => {
   try {
-    await axios.post(`https://graph.facebook.com/v17.0/113481255179838/messages?access_token=${WHATSAPP_TOKEN}`, {
+    const { data } = await axios.post(`https://graph.facebook.com/v17.0/113481255179838/messages?access_token=${WHATSAPP_TOKEN}`, {
       messaging_product: "whatsapp",
       to: phoneNumbers,
       type: "template",
@@ -93,8 +92,10 @@ const sendWhatsAppReminder = async (shabesEntering, havdala, phoneNumbers, name)
         ],
       },
     });
+
+    console.log(` send whatsapp message ` + JSON.stringify(data));
   } catch (error) {
-    console.error(`failes to send whatsapp message ` + error);
+    console.error(`failes to send whatsapp message ` + error + JSON.stringify(error.response?.data));
   }
 };
 
