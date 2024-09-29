@@ -93,7 +93,7 @@ const sendWhatsAppReminder = async (shabesEntering, havdala, phoneNumbers, name)
       },
     });
 
-    console.log(` send whatsapp message ` + JSON.stringify(data));
+    console.log(` send whatsapp message1 ` + JSON.stringify(data));
   } catch (error) {
     console.error(`failes to send whatsapp message ` + error + JSON.stringify(error.response?.data));
   }
