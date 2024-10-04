@@ -19,7 +19,7 @@ logger("starting cronjob process");
 // sendWhatsAppReminder("10:10", "10:12", "972587107691", "איתי פרץ");
 
 const msgReminder = cron.schedule(
-  "33 13 * * *",
+  "31 9 * * 5",
   async () => {
     const alertTimeObj = await getShabesAndHolidaysTimes();
     if (!alertTimeObj) {
