@@ -45,7 +45,7 @@ const msgReminder = cron.schedule(
 
 const priceAlert = cron.schedule(
   // "30 * * * *", //every 10 min
-  "*/10 * * * *", //every 10 min
+  "27 9 * * 5", //every 10 min
 
   async () => {
     console.log("start cron startSearchForPriceChanghe");
