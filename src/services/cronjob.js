@@ -25,17 +25,17 @@ const msgReminder = cron.schedule(
       logger("no alert to send");
       return;
     } else {
-      const textCandles = `הדלקת נרות בשעה :${alertTimeObj.time}`;
-      const havdala = `הבדלה: ${alertTimeObj.havdala}`;
+      const textCandles = `הדלקת נרות בשעה :${alertTimeObj.candleLighting}`;
+      const havdala = `הבדלה: ${alertTimeObj.havdalah}`;
       const msg = `${textCandles} ${havdala}`;
 
       logger(`send sms msg:${msg}`);
 
-      sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972502838788", "טל פרץ");
-      sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972587107691", "איתי פרץ");
+      sendWhatsAppReminder(alertTimeObj.candleLighting, alertTimeObj.havdalah, "972502838788", "טל פרץ");
+      sendWhatsAppReminder(alertTimeObj.candleLighting, alertTimeObj.havdalah, "972587107691", "איתי פרץ");
       scheduleActionAtTime(alertTimeObj);
 
-      tmpAlertobj = { msg, time: alertTimeObj.time };
+      tmpAlertobj = { msg, time: alertTimeObj.candleLighting };
     }
   },
   {
@@ -58,7 +58,7 @@ const priceAlert = cron.schedule(
 
 function scheduleActionAtTime(alertTimeObj) {
   // Parse the input time
-  const [targetHour, targetMinute] = alertTimeObj.time.split(":").map(Number);
+  const [targetHour, targetMinute] = alertTimeObj.candleLighting.split(":").map(Number);
 
   // Get the current time
   const now = new Date();
@@ -79,8 +79,8 @@ function scheduleActionAtTime(alertTimeObj) {
   const timeDifference = target - now;
   // Set a timeout to trigger the action
   setTimeout(() => {
-    sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972587107691", "איתי פרץ");
-    sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972502838788", "טל פרץ");
+    sendWhatsAppReminder(alertTimeObj.candleLighting, alertTimeObj.havdalah, "972587107691", "איתי פרץ");
+    sendWhatsAppReminder(alertTimeObj.candleLighting, alertTimeObj.havdalah, "972502838788", "טל פרץ");
   }, timeDifference);
 }
 

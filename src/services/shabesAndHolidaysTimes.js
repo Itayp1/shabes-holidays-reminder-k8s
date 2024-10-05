@@ -4,6 +4,7 @@ const promisify = require("util").promisify;
 const soap = require("soap");
 const moment = require("moment");
 const logger = (msg) => console.log(msg, new Date());
+const shavesCalc = require("./shabesCalc");
 const hebcalApi = axios.create({
   baseURL: "https://www.hebcal.com",
 });
@@ -12,48 +13,11 @@ const getShabesAndHolidaysTimes = async () => {
   const today = new Date();
   const dayOfWeek = today.getDay();
   const inShabat = dayOfWeek === 5 || dayOfWeek === 6;
-  const { data } = await hebcalApi.get("/hebcal", {
-    params: {
-      cfg: "json",
-      v: "1",
-      start: inShabat ? moment().subtract(2, "days").format("YYYY-MM-DD") : moment().format("YYYY-MM-DD"),
-      end: moment().add(7, "days").format("YYYY-MM-DD"),
-      geonameid: "295620",
-      b: "30",
-      lg: "he",
-    },
-  });
-
-  const parsedTextToTime = data.items
-    .map((obj) => {
-      obj.date = moment(obj.date).format("YYYY:MM:DD");
-      obj.time = obj.title.split(": ")[1];
-      return obj;
-    })
-    .filter(({ category }) => category === "havdalah" || category === "candles");
-
-  let customIndex = false;
-  parsedTextToTime.forEach((obj) => {
-    if (!customIndex && obj.category === "candles") {
-      customIndex = obj;
-
-      return;
-    } else if (customIndex && obj.category === "candles") {
-      customIndex.secHoliday = obj.title.split(": ")[1];
-      return;
-    } else if (customIndex && obj.category === "havdalah") {
-      customIndex.havdala = obj.time;
-      return;
-    } else {
-      logger(`do nothing customIndex:${customIndex} category:${obj.category}`);
-    }
-  });
-  if (isValidTime(customIndex)) {
-    customIndex.isShabes = true;
-  } else {
-    customIndex.isShabes = false;
-  }
-  return customIndex;
+  const shabbatDate = shavesCalc.getClosestFriday();
+  const obj = await shavesCalc.getShabbatTimesForAshkelon(shabbatDate);
+  obj.shabbatDate = shabbatDate;
+  console.log(obj);
+  return obj;
 };
 function isValidTime(jsonInput) {
   const { date, time, havdala } = jsonInput;
@@ -97,6 +61,34 @@ const sendSmsReminder = async (textMsg, phoneNumbers) => {
     throw new Error(`the service dident send the sms err:${JSON.stringify(res)}`);
   }
 };
+
+async function fetchSunsetTimeForAshkelon(date) {
+  const latitude = 31.6689; // Ashkelon's latitude
+  const longitude = 34.5669; // Ashkelon's longitude
+
+  // Construct the URL for a free sunset API
+  const response = await fetch(`https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&date=${date}&formatted=0`);
+
+  if (!response.ok) {
+    throw new Error(`Error fetching sunset time: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return new Date(data.results.sunset); // Assuming the sunset time is returned in ISO format
+}
+
+function calculateShabbatTimes(sunsetTime) {
+  // Calculate candle lighting time (18 minutes before sunset)
+  const candleLighting = new Date(sunsetTime.getTime() - 30 * 60 * 1000); // 18 minutes before sunset
+
+  // Calculate havdalah time (60 minutes after sunset)
+  const havdalahTime = new Date(sunsetTime.getTime() + 35 * 60 * 1000); // 60 minutes after sunset
+
+  return {
+    candleLighting: candleLighting.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    havdalah: havdalahTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+  };
+}
 
 const sendWhatsAppReminder = async (shabesEntering, havdala, phoneNumbers, name) => {
   try {
