@@ -15,10 +15,10 @@ async function fetchSunsetTimeForAshkelon(date) {
 
 function calculateShabbatTimes(sunsetTime) {
   // Calculate candle lighting time (18 minutes before sunset)
-  const candleLighting = new Date(sunsetTime.getTime() - 18 * 60 * 1000); // 18 minutes before sunset
+  const candleLighting = new Date(sunsetTime.getTime() - 32 * 60 * 1000); // 18 minutes before sunset
 
   // Calculate havdalah time (60 minutes after sunset)
-  const havdalahTime = new Date(sunsetTime.getTime() + 60 * 60 * 1000); // 60 minutes after sunset
+  const havdalahTime = new Date(sunsetTime.getTime() + 34 * 60 * 1000); // 60 minutes after sunset
 
   return {
     candleLighting,
