@@ -9,12 +9,15 @@ const hebcalApi = axios.create({
 });
 const { WHATSAPP_TOKEN } = require("../../server.config");
 const getShabesAndHolidaysTimes = async () => {
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const inShabat = dayOfWeek === 5 || dayOfWeek === 6;
   const { data } = await hebcalApi.get("/hebcal", {
     params: {
       cfg: "json",
       v: "1",
-      start: moment().format("YYYY-MM-DD"),
-      end: moment().add(2, "days").format("YYYY-MM-DD"),
+      start: inShabat ? moment().subtract(2, "days").format("YYYY-MM-DD") : moment().format("YYYY-MM-DD"),
+      end: moment().add(7, "days").format("YYYY-MM-DD"),
       geonameid: "295620",
       b: "30",
       lg: "he",
@@ -30,10 +33,10 @@ const getShabesAndHolidaysTimes = async () => {
     .filter(({ category }) => category === "havdalah" || category === "candles");
 
   let customIndex = false;
-  const today = moment().format("YYYY:MM:DD");
   parsedTextToTime.forEach((obj) => {
-    if (!customIndex && obj.category === "candles" && obj.date == today) {
+    if (!customIndex && obj.category === "candles") {
       customIndex = obj;
+
       return;
     } else if (customIndex && obj.category === "candles") {
       customIndex.secHoliday = obj.title.split(": ")[1];
@@ -45,10 +48,46 @@ const getShabesAndHolidaysTimes = async () => {
       logger(`do nothing customIndex:${customIndex} category:${obj.category}`);
     }
   });
-
+  if (isValidTime(customIndex)) {
+    customIndex.isShabes = true;
+  } else {
+    customIndex.isShabes = false;
+  }
   return customIndex;
 };
+function isValidTime(jsonInput) {
+  const { date, time, havdala } = jsonInput;
 
+  // Convert date string from 'YYYY:MM:DD' to 'YYYY-MM-DD'
+  const formattedDate = date.split(":").join("-");
+
+  // Convert date, time, and havdala to Date objects
+  const inputDate = new Date(formattedDate); // Date from JSON
+  const inputTime = new Date(`${formattedDate}T${time}`); // Date object for input time
+  const havdalaTime = new Date(`${formattedDate}T${havdala}`); // Date object for havdala time
+  havdalaTime.setDate(inputDate.getDate() + 1); // Move to the next day
+
+  const now = new Date(); // Current date and time
+  const dayAfter = new Date(inputDate); // Date object for the day after
+  dayAfter.setDate(inputDate.getDate() + 1); // Move to the next day
+
+  // Check if the current date is the same as the input date or the day after
+  const isSameDay = now.toDateString() === inputDate.toDateString();
+  const isDayAfter = now.toDateString() === dayAfter.toDateString();
+
+  // If it's the same day, check if the current time is after the input time but before havdala
+  if (isSameDay) {
+    return now >= inputTime;
+  }
+
+  // If it's the day after, check if the current time is before havdala (only)
+  if (isDayAfter) {
+    return now <= havdalaTime;
+  }
+
+  // If it's neither the same day nor the day after, return false
+  return false;
+}
 const sendSmsReminder = async (textMsg, phoneNumbers) => {
   const sendSmsToRecipients = await getSoapClient(conf.SMS_API_URL, "WsSMS.WsSMSSoap.sendSmsToRecipients");
   const request = { ApiKey: conf.SMS_API_KEY, txtOriginator: "IDEV-CLOUD", destinations: phoneNumbers.join(","), txtAddInf: "jsnodetest", txtSMSmessage: textMsg };
