@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:20
 
 RUN cp /usr/share/zoneinfo/Israel /etc/localtime && echo "Israel" >  /etc/timezone
 # Create app directory
