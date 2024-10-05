@@ -35,8 +35,8 @@ async function getShabbatTimesForAshkelon(date) {
 
     // Format times for output
     const formattedTimes = {
-      candleLighting: shabbatTimes.candleLighting.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false }),
-      havdalah: shabbatTimes.havdalahTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false }),
+      candleLighting: shabbatTimes.candleLighting.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Jerusalem" }),
+      havdalah: shabbatTimes.havdalahTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Jerusalem" }),
       isShabbat: shabbatTimes.isShabbat,
     };
 
