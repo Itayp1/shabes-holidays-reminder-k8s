@@ -17,7 +17,6 @@ logger("starting cronjob process");
 /////////////////////////////////  │  │  │ │ │
 ///////////////////////////////#   *  *  * * *
 // sendWhatsAppReminder("10:10", "10:12", "972587107691", "איתי פרץ");
-
 const msgReminder = cron.schedule(
   "35 9 * * 5",
   async () => {
@@ -34,6 +33,7 @@ const msgReminder = cron.schedule(
 
       sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972502838788", "טל פרץ");
       sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972587107691", "איתי פרץ");
+      scheduleActionAtTime(alertTimeObj);
 
       tmpAlertobj = { msg, time: alertTimeObj.time };
     }
@@ -55,6 +55,34 @@ const priceAlert = cron.schedule(
     timezone: "Asia/Jerusalem", //set timezone to jerusalem here
   }
 );
+
+function scheduleActionAtTime(alertTimeObj) {
+  // Parse the input time
+  const [targetHour, targetMinute] = alertTimeObj.time.split(":").map(Number);
+
+  // Get the current time
+  const now = new Date();
+  const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+  const currentSecond = now.getSeconds();
+
+  // Calculate the target time for today
+  const target = new Date();
+  target.setHours(targetHour, targetMinute - 10, 0, 0); // Subtract 10 minutes from the target time
+
+  // If the target time is earlier than the current time, assume it is for the next day
+  if (target < now) {
+    target.setDate(target.getDate() + 1);
+  }
+
+  // Calculate the difference in milliseconds
+  const timeDifference = target - now;
+  // Set a timeout to trigger the action
+  setTimeout(() => {
+    sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972587107691", "איתי פרץ");
+    sendWhatsAppReminder(alertTimeObj.time, alertTimeObj.havdala, "972502838788", "טל פרץ");
+  }, timeDifference);
+}
 
 module.exports = {
   // beforeShabesReminder,

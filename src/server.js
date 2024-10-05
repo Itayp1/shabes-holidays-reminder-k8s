@@ -8,6 +8,8 @@ const express = require("express");
 const app = express();
 
 const tasks = require("./services/cronjob");
+const shabestimes = require("./routes/shabestimes");
+
 // Health Check endpoints
 app.get("/health", async (req, res) => {
   res.status(200).send({ status: "UP" }).end();
@@ -24,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(helmet());
 //register gzip compression
 app.use(compression());
+app.use("/api", shabestimes);
 
 /// catch 404 and forward to error handler
 app.use((req, res, next) => {
